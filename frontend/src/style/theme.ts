@@ -6,6 +6,11 @@ const theme = createTheme({
       fontSize: '2rem',
       fontWeight: 'bold',
     },
+    subtitle2: {
+      fontSize: '0.75rem',
+      textAlign: 'right',
+      color: '#bbbbbb',
+    },
   },
 });
 

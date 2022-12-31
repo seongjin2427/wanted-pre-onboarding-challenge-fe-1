@@ -37,6 +37,11 @@ const LoginPage = () => {
     setUserInfo(next);
   };
 
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) navigate('/');
+  }, [navigate]);
+
   return (
     <Box
       sx={{
