@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container } from '@mui/system';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -9,8 +10,33 @@ import {
   ListItemButton,
 } from '@mui/material';
 import AddTodo from '../components/AddTodo';
+import { getTodosApi } from '../api/todo';
+import { TodoType } from '../types/todo';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const [todos, setTodos] = React.useState<TodoType[]>([]);
+
+  const mode = React.useMemo(() => {
+    return search.split('?')[1].split('=')[1];
+  }, [search]);
+
+  const getTodos = React.useCallback(async () => {
+    const { status, data } = await getTodosApi();
+    if (status === 200) {
+      setTodos(data);
+    }
+  }, []);
+
+  const changeMode = (s: string) => {
+    navigate(`/?type=${s}`);
+  };
+
+  React.useEffect(() => {
+    getTodos();
+  }, [getTodos, search]);
+
   return (
     <Container
       component="div"
@@ -33,45 +59,40 @@ const Home = () => {
           marginBottom="20px"
         >
           <Typography variant="h1">TodoList</Typography>
-          <Button size="large">
+          <Button size="large" onClick={() => changeMode('add')}>
             <Typography variant="h1">+</Typography>
           </Button>
         </Box>
         <List>
-          <Todo
-            id="1"
-            title="테스트"
-            createdAt="2023-01-01"
-            updatedAt="2023-01-01"
-          />
-          <Todo
-            id="1"
-            title="테스트"
-            createdAt="2023-01-01"
-            updatedAt="2023-01-01"
-          />
+          {todos.map((todo) => (
+            <Todo key={todo.id} {...todo} />
+          ))}
         </List>
       </Box>
       <Box flex="3" padding="30px 30px">
-        <AddTodo />
+        {mode === 'add' && <AddTodo />}
       </Box>
     </Container>
   );
 };
 
 interface TodoProps {
-  id: string;
+  id?: string;
   title: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const Todo = ({ id, title, updatedAt }: TodoProps) => {
+  const formatter = Intl.DateTimeFormat('ko-KR', {}).format;
+
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'flex-start', padding: 0 }}>
       <ListItemButton sx={{ display: 'block' }}>
         <Typography variant="h6">{title}</Typography>
-        <Typography variant="subtitle2">{updatedAt}</Typography>
+        <Typography variant="subtitle2">
+          {updatedAt && formatter(new Date(updatedAt))}
+        </Typography>
       </ListItemButton>
     </ListItem>
   );
