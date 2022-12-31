@@ -2,20 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Tabs, Tab, Typography, TextField, Button } from '@mui/material';
 
+import { UserInfoType } from '../types/login';
 import { loginApi, signUpApi } from '../api/auth';
+import { validateUserInfo } from '../utils/validate';
 
-interface UserInfoType {
-  loginId: string;
-  password: string;
-  [key: string]: string;
-}
-
-const regexp: { [key: string]: RegExp } = {
-  loginId: /^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-  password: /^.{8,}$/,
-};
-
-const Auth = () => {
+const LoginPage = () => {
   const navigate = useNavigate();
   const [tab, setTabs] = React.useState(0);
   const [valid, setValid] = React.useState(false);
@@ -42,14 +33,7 @@ const Auth = () => {
     const { name, value } = e.target;
     const next: UserInfoType = { ...userInfo };
     next[name] = value;
-    if (
-      regexp.loginId.test(next.loginId) &&
-      regexp.password.test(next.password)
-    ) {
-      setValid(true);
-    } else {
-      setValid(false);
-    }
+    setValid(validateUserInfo(next));
     setUserInfo(next);
   };
 
@@ -93,33 +77,20 @@ const Auth = () => {
             fullWidth
           />
 
-          {tab === 0 ? (
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              type="submit"
-              disabled={!valid}
-              fullWidth
-            >
-              LOGIN
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              type="submit"
-              disabled={!valid}
-              fullWidth
-            >
-              SIGN UP
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            type="submit"
+            disabled={!valid}
+            fullWidth
+          >
+            {tab === 0 ? 'LOGIN' : 'SIGN UP'}
+          </Button>
         </form>
       </Box>
     </Box>
   );
 };
 
-export default Auth;
+export default LoginPage;
