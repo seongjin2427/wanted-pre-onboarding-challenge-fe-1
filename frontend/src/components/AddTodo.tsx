@@ -16,7 +16,7 @@ const AddTodo = () => {
       const status = await addTodoApi({ title, content });
       if (status === 200) {
         alert('정상적으로 등록되었습니다.');
-        navigate('/?type=read');
+        navigate('/');
       }
     }
   };

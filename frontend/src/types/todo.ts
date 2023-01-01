@@ -2,8 +2,9 @@ interface TodoType {
   id?: string;
   title: string;
   content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
+  [key: string]: string | undefined;
 }
 
 export type { TodoType };

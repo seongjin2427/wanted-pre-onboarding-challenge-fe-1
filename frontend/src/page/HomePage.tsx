@@ -12,14 +12,16 @@ import {
 import AddTodo from '../components/AddTodo';
 import { getTodosApi } from '../api/todo';
 import { TodoType } from '../types/todo';
+import TodoDetail from '../components/TodoDetail';
 
 const Home = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const [todos, setTodos] = React.useState<TodoType[]>([]);
+  const [todoId, setTodoId] = React.useState<string>('');
 
   const mode = React.useMemo(() => {
-    return search.split('?')[1].split('=')[1];
+    return search && search.split('?')[1].split('=')[1];
   }, [search]);
 
   const getTodos = React.useCallback(async () => {
@@ -28,6 +30,10 @@ const Home = () => {
       setTodos(data);
     }
   }, []);
+
+  const showTodoDetail = (id: string) => {
+    setTodoId(id);
+  };
 
   const changeMode = (s: string) => {
     navigate(`/?type=${s}`);
@@ -65,12 +71,13 @@ const Home = () => {
         </Box>
         <List>
           {todos.map((todo) => (
-            <Todo key={todo.id} {...todo} />
+            <Todo key={todo.id} showTodoDetail={showTodoDetail} {...todo} />
           ))}
         </List>
       </Box>
       <Box flex="3" padding="30px 30px">
         {mode === 'add' && <AddTodo />}
+        {(mode === 'detail' || mode === 'modify') && <TodoDetail id={todoId} />}
       </Box>
     </Container>
   );
@@ -79,16 +86,23 @@ const Home = () => {
 interface TodoProps {
   id?: string;
   title: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
+  showTodoDetail(id: string): void;
 }
 
-const Todo = ({ id, title, updatedAt }: TodoProps) => {
+const Todo = ({ id, title, updatedAt, showTodoDetail }: TodoProps) => {
+  const navigate = useNavigate();
   const formatter = Intl.DateTimeFormat('ko-KR', {}).format;
+
+  const changeTodoId = () => {
+    id && showTodoDetail(id);
+    navigate('/?mode=detail');
+  };
 
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'flex-start', padding: 0 }}>
-      <ListItemButton sx={{ display: 'block' }}>
+      <ListItemButton onClick={changeTodoId} sx={{ display: 'block' }}>
         <Typography variant="h6">{title}</Typography>
         <Typography variant="subtitle2">
           {updatedAt && formatter(new Date(updatedAt))}

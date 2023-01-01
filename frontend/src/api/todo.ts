@@ -34,9 +34,6 @@ const getTodosApi = async () => {
         },
       },
     );
-
-    console.log(data);
-
     return { status, data: data.data };
   } catch (err) {
     const error = err as AxiosError;
@@ -44,4 +41,62 @@ const getTodosApi = async () => {
   }
 };
 
-export { addTodoApi, getTodosApi };
+const getTodoByIdApi = async (id: string) => {
+  try {
+    const { status, data } = await axios.get<{ data: TodoType }>(
+      `http://localhost:8080/todos/${id}`,
+      {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      },
+    );
+
+    return { status, data: data.data };
+  } catch (err) {
+    const error = err as AxiosError;
+    return { status: error.response?.status, data: null };
+  }
+};
+
+const updateTodoApi = async ({ id, title, content }: TodoType) => {
+  try {
+    const { status } = await axios.put(
+      `http://localhost:8080/todos/${id}`,
+      { title, content },
+      {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      },
+    );
+
+    return status;
+  } catch (err) {
+    const error = err as AxiosError;
+    return error.response?.status;
+  }
+};
+
+const removeTodoApi = async (id: string) => {
+  try {
+    const { status } = await axios.delete(`http://localhost:8080/todos/${id}`, {
+      headers: {
+        Authorization: localStorage.getItem('token'),
+      },
+    });
+
+    return status;
+  } catch (err) {
+    const error = err as AxiosError;
+    return error.response?.status;
+  }
+};
+
+export {
+  addTodoApi,
+  getTodosApi,
+  getTodoByIdApi,
+  updateTodoApi,
+  removeTodoApi,
+};
