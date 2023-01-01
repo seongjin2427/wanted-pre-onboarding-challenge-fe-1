@@ -9,19 +9,20 @@ import {
   ListItem,
   ListItemButton,
 } from '@mui/material';
+
 import AddTodo from '../components/AddTodo';
-import { getTodosApi } from '../api/todo';
-import { TodoType } from '../types/todo';
 import TodoDetail from '../components/TodoDetail';
+import { TodoType } from '../types/todo';
+import { parseQuery } from '../utils/parseQuery';
+import { getTodosApi } from '../api/todo';
 
 const Home = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const [todos, setTodos] = React.useState<TodoType[]>([]);
-  const [todoId, setTodoId] = React.useState<string>('');
 
-  const mode = React.useMemo(() => {
-    return search && search.split('?')[1].split('=')[1];
+  const { mode, todo } = React.useMemo(() => {
+    return parseQuery(search);
   }, [search]);
 
   const getTodos = React.useCallback(async () => {
@@ -30,10 +31,6 @@ const Home = () => {
       setTodos(data);
     }
   }, []);
-
-  const showTodoDetail = (id: string) => {
-    setTodoId(id);
-  };
 
   const changeMode = (s: string) => {
     navigate(`/?type=${s}`);
@@ -70,14 +67,14 @@ const Home = () => {
           </Button>
         </Box>
         <List>
-          {todos.map((todo) => (
-            <Todo key={todo.id} showTodoDetail={showTodoDetail} {...todo} />
+          {todos.map((td) => (
+            <Todo key={td.id} active={td.id === todo} {...td} />
           ))}
         </List>
       </Box>
       <Box flex="3" padding="30px 30px">
         {mode === 'add' && <AddTodo />}
-        {(mode === 'detail' || mode === 'modify') && <TodoDetail id={todoId} />}
+        {(mode === 'detail' || mode === 'modify') && <TodoDetail />}
       </Box>
     </Container>
   );
@@ -88,21 +85,23 @@ interface TodoProps {
   title: string;
   createdAt?: string;
   updatedAt?: string;
-  showTodoDetail(id: string): void;
+  active?: boolean;
 }
 
-const Todo = ({ id, title, updatedAt, showTodoDetail }: TodoProps) => {
+const Todo = ({ id, title, updatedAt, active }: TodoProps) => {
   const navigate = useNavigate();
   const formatter = Intl.DateTimeFormat('ko-KR', {}).format;
 
   const changeTodoId = () => {
-    id && showTodoDetail(id);
-    navigate('/?mode=detail');
+    navigate(`/?mode=detail&todo=${id}`);
   };
 
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'flex-start', padding: 0 }}>
-      <ListItemButton onClick={changeTodoId} sx={{ display: 'block' }}>
+      <ListItemButton
+        onClick={changeTodoId}
+        sx={{ display: 'block', background: active ? '#eeeeee' : 'none' }}
+      >
         <Typography variant="h6">{title}</Typography>
         <Typography variant="subtitle2">
           {updatedAt && formatter(new Date(updatedAt))}

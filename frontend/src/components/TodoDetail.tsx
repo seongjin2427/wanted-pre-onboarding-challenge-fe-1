@@ -1,21 +1,25 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, Input } from '@mui/material';
-import { getTodoByIdApi, removeTodoApi, updateTodoApi } from '../api/todo';
+
 import { TodoType } from '../types/todo';
+import { parseQuery } from '../utils/parseQuery';
+import { getTodoByIdApi, removeTodoApi, updateTodoApi } from '../api/todo';
 
-interface TodoDetailProps {
-  id: string;
-}
-
-const TodoDetail = ({ id }: TodoDetailProps) => {
+const TodoDetail = () => {
   const navigate = useNavigate();
+  const { search } = useLocation();
   const [todo, setTodo] = React.useState<TodoType | null>(null);
   const [modifyMode, setModifyMode] = React.useState<boolean>(false);
   const [modifiedTodo, setModifiedTodo] = React.useState<TodoType>({
     title: '',
     content: '',
   });
+
+  const id = React.useMemo(() => {
+    return parseQuery(search).todo;
+  }, [search]);
+
   const formatter = Intl.DateTimeFormat('ko-KR', {}).format;
 
   const fetchTodo = React.useCallback(async () => {
@@ -35,12 +39,12 @@ const TodoDetail = ({ id }: TodoDetailProps) => {
   const onModifyMode = () => {
     setModifiedTodo(todo);
     setModifyMode(true);
-    navigate('/?mode=modify');
+    navigate(`/?mode=modify&todo=${id}`);
   };
 
   const cancelModifyMode = () => {
     setModifyMode(false);
-    navigate('/?mode=detail');
+    navigate(`/?mode=detail&todo=${id}`);
   };
 
   const changeTodo = (e: React.ChangeEvent<HTMLInputElement>) => {
