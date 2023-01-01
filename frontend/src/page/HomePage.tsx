@@ -1,24 +1,19 @@
 import React from 'react';
 import { Container } from '@mui/system';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-} from '@mui/material';
+import { Box, Typography, Button, List } from '@mui/material';
 
+import Todo from '../components/Todo';
 import AddTodo from '../components/AddTodo';
 import TodoDetail from '../components/TodoDetail';
 import { TodoType } from '../types/todo';
 import { parseQuery } from '../utils/parseQuery';
 import { getTodosApi } from '../api/todo';
+import { validateStatus } from '../utils/validateStatus';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const [todos, setTodos] = React.useState<TodoType[]>([]);
 
   const { mode, todo } = React.useMemo(() => {
@@ -27,13 +22,18 @@ const Home = () => {
 
   const getTodos = React.useCallback(async () => {
     const { status, data } = await getTodosApi();
+
+    if (status) {
+      navigate(validateStatus(status, pathname + search));
+    }
+
     if (status === 200) {
       setTodos(data);
     }
-  }, []);
+  }, [pathname, search, navigate]);
 
   const changeMode = (s: string) => {
-    navigate(`/?type=${s}`);
+    navigate(`/?mode=${s}`);
   };
 
   React.useEffect(() => {
@@ -77,37 +77,6 @@ const Home = () => {
         {(mode === 'detail' || mode === 'modify') && <TodoDetail />}
       </Box>
     </Container>
-  );
-};
-
-interface TodoProps {
-  id?: string;
-  title: string;
-  createdAt?: string;
-  updatedAt?: string;
-  active?: boolean;
-}
-
-const Todo = ({ id, title, updatedAt, active }: TodoProps) => {
-  const navigate = useNavigate();
-  const formatter = Intl.DateTimeFormat('ko-KR', {}).format;
-
-  const changeTodoId = () => {
-    navigate(`/?mode=detail&todo=${id}`);
-  };
-
-  return (
-    <ListItem sx={{ display: 'flex', alignItems: 'flex-start', padding: 0 }}>
-      <ListItemButton
-        onClick={changeTodoId}
-        sx={{ display: 'block', background: active ? '#eeeeee' : 'none' }}
-      >
-        <Typography variant="h6">{title}</Typography>
-        <Typography variant="subtitle2">
-          {updatedAt && formatter(new Date(updatedAt))}
-        </Typography>
-      </ListItemButton>
-    </ListItem>
   );
 };
 

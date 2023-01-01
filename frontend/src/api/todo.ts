@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios';
 import { TodoType } from '../types/todo';
 
 const addTodoApi = async ({ title, content }: TodoType) => {
-  console.log(title, content);
   try {
     const { status } = await axios.post(
       'http://localhost:8080/todos',
