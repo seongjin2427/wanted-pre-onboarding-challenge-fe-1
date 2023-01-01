@@ -1,0 +1,48 @@
+{
+  "todos": [
+    {
+      "title": "테스트gggggggtuiltuilg",
+      "content": "테스트vwsdvwe",
+      "id": "z8NT_nGbEsh702qVXa_SS",
+      "createdAt": "2022-12-31T23:10:31.780Z",
+      "updatedAt": "2023-01-01T01:46:00.645Z"
+    },
+    {
+      "title": "aaaaaaaaaaaaa",
+      "content": "aasdfasdfwe",
+      "id": "BIi54rFsZ3265CfQ3fxz2",
+      "createdAt": "2023-01-01T01:46:14.280Z",
+      "updatedAt": "2023-01-01T01:46:14.280Z"
+    }
+  ],
+  "users": [
+    {
+      "email": "test@test.com",
+      "password": "12341234",
+      "id": "qC6vIkYfMZpYOeArsb_EW",
+      "createdAt": "2022-12-31T12:54:43.543Z",
+      "updatedAt": "2022-12-31T12:54:43.543Z"
+    },
+    {
+      "email": "test1@test.com",
+      "password": "12341234",
+      "id": "H-qDG3gTPzz302_EdiIkI",
+      "createdAt": "2022-12-31T14:33:47.387Z",
+      "updatedAt": "2022-12-31T14:33:47.387Z"
+    },
+    {
+      "email": "test2@test.com",
+      "password": "12341234",
+      "id": "65B84YH5kuVawz7jZhf3Q",
+      "createdAt": "2022-12-31T14:34:00.773Z",
+      "updatedAt": "2022-12-31T14:34:00.773Z"
+    },
+    {
+      "email": "test3@test.com",
+      "password": "12341234",
+      "id": "NXw-HPqrYA0Or2XEM11hd",
+      "createdAt": "2022-12-31T14:36:53.419Z",
+      "updatedAt": "2022-12-31T14:36:53.419Z"
+    }
+  ]
+}
